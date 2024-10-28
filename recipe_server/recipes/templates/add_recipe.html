@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}Add New Recipe{% endblock %}
+
+{% block content %}
+        <h2 class="text-center my-4">Add New Recipe</h2>
+
+        <form method="post" class="bg-light p-4 rounded">
+            {% csrf_token %}
+
+            <!-- Recipe Title and Instructions -->
+            <div class="mb-3">
+                <label for="title" class="form-label">Title</label>
+                <input type="text" id="title" name="title" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="instructions" class="form-label">Instructions</label>
+                <textarea id="instructions" name="instructions" class="form-control" rows="4" required></textarea>
+            </div>
+
+            <!-- Ingredients Section -->
+            <h3 class="mt-4">Ingredients</h3>
+            <div id="ingredient-formset">
+                <div class="mb-3 d-flex align-items-center">
+                    <label class="form-label me-2">Ingredient 1</label>
+                    <select name="ingredient_0" class="form-select me-2" required>
+                        <option value="" selected disabled>Select Ingredient</option>
+                        {% for ingredient in ingredients %}
+                            <option value="{{ ingredient.id }}">{{ ingredient.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <input type="text" name="amount_0" class="form-control" placeholder="Amount" required>
+                </div>
+            </div>
+
+            <button type="button" class="btn btn-secondary mb-3" onclick="addIngredientForm()">Add Another Ingredient</button>
+
+            <!-- Form to add a new ingredient -->
+            <h3 class="mt-4">Add New Ingredient to List</h3>
+            <div class="d-flex align-items-center">
+                <input type="text" id="new_ingredient_name" class="form-control me-2" placeholder="New Ingredient Name">
+                <button type="button" class="btn btn-primary" onclick="addNewIngredient()">Add Ingredient</button>
+            </div>
+
+            <button type="submit" class="btn btn-primary mt-4">Add Recipe</button>
+        </form>
+
+    </main>
+    {% endblock %}
+
+    {% block extra_js %}
+    <script>
+        // JavaScript function to add a new ingredient via AJAX
+        function addNewIngredient() {
+            const ingredientName = document.getElementById('new_ingredient_name').value;
+
+            if (ingredientName) {
+                fetch("{% url 'add_ingredient' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': '{{ csrf_token }}'  // CSRF token for Django
+                    },
+                    body: new URLSearchParams({
+                        'ingredient_name': ingredientName
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert(`Ingredient '${data.ingredient.name}' added successfully.`);
+                        
+                        // Optionally, add the new ingredient to the dropdown
+                        const ingredientSelect = document.querySelectorAll('select[name^="ingredient_"]');
+                        ingredientSelect.forEach(select => {
+                            const option = document.createElement('option');
+                            option.value = data.ingredient.id;
+                            option.text = data.ingredient.name;
+                            select.add(option);
+                        });
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            } else {
+                alert("Please enter an ingredient name.");
+            }
+        }
+
+        // Function to dynamically add an ingredient form field
+        function addIngredientForm() {
+            const formContainer = document.getElementById('ingredient-formset');
+            const formCount = formContainer.children.length;
+
+            const newIngredientDiv = document.createElement('div');
+            newIngredientDiv.classList.add('mb-3', 'd-flex', 'align-items-center'); // Add Bootstrap classes
+
+            newIngredientDiv.innerHTML = `
+                <label  class="form-label me-2">Ingredient ${formCount + 1}</label>
+                <select name="ingredient_${formCount}" class="form-select me-2" required>
+                    <option value="" selected disabled>Select Ingredient</option>
+                    {% for ingredient in ingredients %}
+                        <option value="{{ ingredient.id }}">{{ ingredient.name }}</option>
+                    {% endfor %}
+                </select>
+                <input type="text" name="amount_${formCount}" class="form-control" placeholder="Amount" required>
+            `;
+            
+            formContainer.appendChild(newIngredientDiv);
+        }
+    </script>
+    {% endblock %}
+
