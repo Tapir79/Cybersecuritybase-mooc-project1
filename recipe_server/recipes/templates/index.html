@@ -5,4 +5,7 @@
 {% block content %}
     <h1>Welcome to the Recipe App</h1>
     <p><a href="{% url 'recipe_list' %}">View All Recipes</a></p>
+    {% if user.is_authenticated %}
+    <p><a href="{% url 'add_recipe' %}">Add a New Recipe</a></p>
+    {% endif %} 
 {% endblock %}
