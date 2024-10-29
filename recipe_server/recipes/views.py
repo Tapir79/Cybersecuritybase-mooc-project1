@@ -1,10 +1,11 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from .models import Recipe, Ingredient, RecipeIngredient
-from django.http import JsonResponse
+from django.http import Http404, JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db import connection
 
 def index(request):
     return render(request, 'index.html') 
@@ -14,11 +15,60 @@ def recipe_list(request):
     print(recipes)
     return render(request, 'recipe_list.html', {'recipes': recipes})
 
-def recipe_detail(request, recipe_id):
-    recipe = get_object_or_404(Recipe, id=recipe_id)
-    return render(request, 'recipe_detail.html', {'recipe': recipe})
+# A03:2021 – Injection
+# Insecure: Directly injecting `recipe_id` into the query without sanitization
+# Fix: 
+# - uncomment row 26
+# - delete row 25
+from django.db import connection
+from django.http import Http404
+from django.shortcuts import render
 
-@login_required
+def recipe_detail(request, recipe_id):
+    # Fetch the recipe details using raw SQL
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM recipe WHERE id = %s", [recipe_id])
+        recipe_row = cursor.fetchone()
+    
+    if not recipe_row:
+        raise Http404("Recipe not found")
+    
+    # Create a dictionary to pass to the template that mimics the Recipe model
+    recipe = {
+        'id': recipe_row[0],
+        'title': recipe_row[1],
+        'instructions': recipe_row[2],
+        'oven_temperature': recipe_row[3],
+        'equipment': recipe_row[4],
+        'is_dessert': recipe_row[5],
+    }
+    
+    # Fetch related ingredients using a raw SQL query
+    with connection.cursor() as cursor:
+        cursor.execute("""
+            SELECT ri.amount, i.name
+            FROM recipe_ingredient ri
+            JOIN ingredient i ON ri.ingredient_id = i.id
+            WHERE ri.recipe_id = %s
+        """, [recipe_id])
+        
+        ingredients = cursor.fetchall()
+    
+    # Transform the ingredients into a list of dictionaries
+    ingredients_list = [{'amount': row[0], 'name': row[1]} for row in ingredients]
+
+    return render(request, 'recipe_detail.html', {
+        'recipe': recipe,
+        'ingredients': ingredients_list
+    })
+
+
+# def recipe_detail(request, recipe_id):
+#     recipe = get_object_or_404(Recipe, id=recipe_id)
+#     return render(request, 'recipe_detail.html', {'recipe': recipe})
+
+
+# @login_required ##  A01:2021 – Broken Access Control, uncomment to fix the issue
 def add_recipe(request):
 
     ingredients = Ingredient.objects.all()  

@@ -11,8 +11,8 @@
 
     <h2>Ingredients</h2>
     <ul>
-        {% for ingredient in recipe.recipeingredient_set.all %}
-            <li>{{ ingredient.amount }} of {{ ingredient.ingredient.name }}</li>
+        {% for ingredient in ingredients %}
+            <li>{{ ingredient.amount }} of {{ ingredient.name }}</li>
         {% empty %}
             <li>No ingredients listed for this recipe.</li>
         {% endfor %}
