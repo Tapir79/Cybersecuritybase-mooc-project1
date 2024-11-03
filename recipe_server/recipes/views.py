@@ -15,16 +15,17 @@ def recipe_list(request):
     print(recipes)
     return render(request, 'recipe_list.html', {'recipes': recipes})
 
-# A03:2021 – Injection
-# Insecure: Directly injecting `recipe_id` into the query without sanitization
-# Fix: 
-# - uncomment row 27
-# - delete row 26
+
 def recipe_detail(request, recipe_id):
     # Fetch the recipe details using raw SQL
     with connection.cursor() as cursor:
+        # A03:2021 – Injection
+        # Insecure: Directly injecting `recipe_id` into the query without sanitization
+        # Fix: 
+        # - uncomment row 28
+        # - delete row 27
         cursor.execute(f"SELECT * FROM recipe WHERE id = {recipe_id}") # vulnerable
-        #cursor.execute("SELECT * FROM recipe WHERE id = %s", [recipe_id])
+        # cursor.execute("SELECT * FROM recipe WHERE id = %s", [recipe_id])
         recipe_row = cursor.fetchone()
     
     if not recipe_row:
