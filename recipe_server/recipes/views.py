@@ -19,7 +19,7 @@ def recipe_list(request):
 # Insecure: Directly injecting `recipe_id` into the query without sanitization
 # Fix: 
 # - uncomment row 27
-# - delete row 25
+# - delete row 26
 def recipe_detail(request, recipe_id):
     # Fetch the recipe details using raw SQL
     with connection.cursor() as cursor:
