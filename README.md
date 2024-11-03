@@ -20,7 +20,7 @@ The project was created with this tutorial: https://docs.djangoproject.com/en/5.
 - `python manage.py migrate`
 - `python manage.py runserver`
 - Navigate to: http://127.0.0.1:8000/ 
-- Login: `testuser`/`testpassword1`
+- Login: `testuser`/`testP4ssword1`
 
 # The vulnerabilities and their fixes 
 

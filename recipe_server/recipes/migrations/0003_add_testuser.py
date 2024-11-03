@@ -8,7 +8,7 @@ def create_test_user(apps, schema_editor):
     if not User.objects.filter(username="testuser").exists():
         User.objects.create_user(
             username="testuser",
-            password="testpassword1",
+            password="testP4ssword1",
             email="testuser@example.com",
             is_staff=True,  # Modify this based on your needs
             is_superuser=False,  # Modify this based on your needs
