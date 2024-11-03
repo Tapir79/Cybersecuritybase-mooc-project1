@@ -15,12 +15,20 @@ The project was created with this tutorial: https://docs.djangoproject.com/en/5.
 ## Install dependencies to the virtual environment
 - `pip install -r requirements.txt`
 
+## Run the project 
+- cd into `recipe_server` folder
+- `python manage.py migrate`
+- `python manage.py runserver`
+- Navigate to: http://127.0.0.1:8000/ 
+- Login: `testuser`/`testpassword1`
 
 # The vulnerabilities and their fixes 
 
 ## 1. A01:2021 – Broken Access Control
 https://owasp.org/Top10/A01_2021-Broken_Access_Control/
 In `views.py`:
+https://github.com/Tapir79/Cybersecuritybase-mooc-project1/blob/9f16d70dcec815c3d67fb52186e4e5e128014b83/recipe_server/recipes/views.py#L61
+
 ````
 def add_recipe(request):  # Missing login_required decorator
     # Existing code for adding a recipe
@@ -38,6 +46,8 @@ def add_recipe(request):
 ## 2. A02:2021 – Cryptographic Failures
 https://owasp.org/Top10/A02_2021-Cryptographic_Failures/
 In `settings.py`:
+https://github.com/Tapir79/Cybersecuritybase-mooc-project1/blob/9f16d70dcec815c3d67fb52186e4e5e128014b83/recipe_server/recipe_server/settings.py#L27
+
 ````
 SECRET_KEY = 'recipes-secret-key'  # Sensitive information hardcoded
 ````
@@ -56,6 +66,7 @@ Set the DJANGO_SECRET_KEY in your environment instead of storing it in the codeb
 ## 3. A03:2021 – Injection
 https://owasp.org/Top10/A03_2021-Injection/
 In `views.py`:
+https://github.com/Tapir79/Cybersecuritybase-mooc-project1/blob/9f16d70dcec815c3d67fb52186e4e5e128014b83/recipe_server/recipes/views.py#L27
 
 ````
 def recipe_detail(request, recipe_id):
@@ -73,7 +84,7 @@ fetch("/recipe_detail?recipe_id=1; DROP TABLE recipe; --")
     .then(data => console.log(data));
 ````
 
-It could drop the recipe table. 
+This could drop the recipe table. 
 
 Solution: Use parameterized queries to prevent SQL injection.
 
@@ -92,6 +103,7 @@ https://owasp.org/Top10/A05_2021-Security_Misconfiguration/
 Vulnerability Example: Allowing DEBUG mode in production exposes sensitive information through error messages.
 
 In `settings.py`:
+https://github.com/Tapir79/Cybersecuritybase-mooc-project1/blob/9f16d70dcec815c3d67fb52186e4e5e128014b83/recipe_server/recipe_server/settings.py#L34
 
 ````
 DEBUG = True  # Leaving DEBUG enabled in production is a risk
@@ -114,6 +126,7 @@ https://owasp.org/Top10/A07_2021-Identification_and_Authentication_Failures/
 Vulnerability Example: Using weak password policies can lead to easily guessable passwords.
 
 In `settings.py`:
+https://github.com/Tapir79/Cybersecuritybase-mooc-project1/blob/9f16d70dcec815c3d67fb52186e4e5e128014b83/recipe_server/recipe_server/settings.py#L101
 
 ````
 AUTH_PASSWORD_VALIDATORS = []  # No password validation rules
