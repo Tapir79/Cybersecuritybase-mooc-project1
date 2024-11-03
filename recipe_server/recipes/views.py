@@ -18,22 +18,18 @@ def recipe_list(request):
 # A03:2021 – Injection
 # Insecure: Directly injecting `recipe_id` into the query without sanitization
 # Fix: 
-# - uncomment row 26
+# - uncomment row 27
 # - delete row 25
-from django.db import connection
-from django.http import Http404
-from django.shortcuts import render
-
 def recipe_detail(request, recipe_id):
     # Fetch the recipe details using raw SQL
     with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM recipe WHERE id = %s", [recipe_id])
+        cursor.execute(f"SELECT * FROM recipe WHERE id = {recipe_id}") # vulnerable
+        #cursor.execute("SELECT * FROM recipe WHERE id = %s", [recipe_id])
         recipe_row = cursor.fetchone()
     
     if not recipe_row:
         raise Http404("Recipe not found")
     
-    # Create a dictionary to pass to the template that mimics the Recipe model
     recipe = {
         'id': recipe_row[0],
         'title': recipe_row[1],
@@ -43,7 +39,6 @@ def recipe_detail(request, recipe_id):
         'is_dessert': recipe_row[5],
     }
     
-    # Fetch related ingredients using a raw SQL query
     with connection.cursor() as cursor:
         cursor.execute("""
             SELECT ri.amount, i.name
@@ -54,7 +49,6 @@ def recipe_detail(request, recipe_id):
         
         ingredients = cursor.fetchall()
     
-    # Transform the ingredients into a list of dictionaries
     ingredients_list = [{'amount': row[0], 'name': row[1]} for row in ingredients]
 
     return render(request, 'recipe_detail.html', {
@@ -63,12 +57,7 @@ def recipe_detail(request, recipe_id):
     })
 
 
-# def recipe_detail(request, recipe_id):
-#     recipe = get_object_or_404(Recipe, id=recipe_id)
-#     return render(request, 'recipe_detail.html', {'recipe': recipe})
-
-
-# @login_required ##  A01:2021 – Broken Access Control, uncomment to fix the issue
+# @login_required ##  A01:2021 – Broken Access Control, uncomment this line to fix the issue
 def add_recipe(request):
 
     ingredients = Ingredient.objects.all()  

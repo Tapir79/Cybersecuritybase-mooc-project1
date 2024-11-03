@@ -1,24 +1,26 @@
 # MOOC Cybersecurity Base Project I 2024 
-Web application that has at least five different flaws from the OWASP top ten list as well as their fixes. THe project uses OWASP Top 10 2021: https://owasp.org/Top10/.  
+Web application that has at least five different flaws from the OWASP top ten list as well as their fixes. The project uses OWASP Top 10 2021: https://owasp.org/Top10/.  
 The project was created with this tutorial: https://docs.djangoproject.com/en/5.1/intro/tutorial01/ 
 
 # Install and Run the project
 
 ## Create python venv 
 - Read this guide (Python 3): https://cybersecuritybase.mooc.fi/installation-guide
-- python -m venv recipes_env
+- `python -m venv recipes_env`
 ### Linux
-- source recipes_env/bin/activate 
+- `source recipes_env/bin/activate` 
 ### Windows
-- .\recipes_env\Scripts\activate
-- pip install -r requirements.txt
+- `.\recipes_env\Scripts\activate`
+
+## Install dependencies to the virtual environment
+- `pip install -r requirements.txt`
 
 
 # The vulnerabilities and their fixes 
 
-##  A01:2021 – Broken Access Control
+## 1. A01:2021 – Broken Access Control
 https://owasp.org/Top10/A01_2021-Broken_Access_Control/
-In `views.py` row 21:
+In `views.py`:
 ````
 def add_recipe(request):  # Missing login_required decorator
     # Existing code for adding a recipe
@@ -33,7 +35,7 @@ def add_recipe(request):
     # Code for adding a recipe
 ````
 
-## A02:2021 – Cryptographic Failures
+## 2. A02:2021 – Cryptographic Failures
 https://owasp.org/Top10/A02_2021-Cryptographic_Failures/
 In `settings.py`:
 ````
@@ -51,9 +53,9 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'default-secret-key')
 Set the DJANGO_SECRET_KEY in your environment instead of storing it in the codebase. 
 
 
-## A03:2021 – Injection
+## 3. A03:2021 – Injection
 https://owasp.org/Top10/A03_2021-Injection/
-In `views.py` row 26:
+In `views.py`:
 
 ````
 def recipe_detail(request, recipe_id):
@@ -85,17 +87,18 @@ def recipe_detail(request, recipe_id):
         recipe = cursor.fetchone()
 ````
 
-## A05:2021 – Security Misconfiguration
+## 4. A05:2021 – Security Misconfiguration
 https://owasp.org/Top10/A05_2021-Security_Misconfiguration/
 Vulnerability Example: Allowing DEBUG mode in production exposes sensitive information through error messages.
 
-In `settings.py` row 34:
+In `settings.py`:
 
 ````
 DEBUG = True  # Leaving DEBUG enabled in production is a risk
 ````
 
 Solution: Disable DEBUG mode in production.
+Set DJANGO_DEBUG=False or don't add the environment variable in production to prevent detailed error messages from being shown to users. The fallback is False meaning that no env var always return False. 
 
 ````
 import os
@@ -103,10 +106,10 @@ import os
 DEBUG = os.getenv('DJANGO_DEBUG', 'False') == 'True'
 ````
 
-Set DJANGO_DEBUG=False in production to prevent detailed error messages from being shown to users.
 
 
-# A07:2021 – Identification and Authentication Failures
+
+## 5. A07:2021 – Identification and Authentication Failures
 https://owasp.org/Top10/A07_2021-Identification_and_Authentication_Failures/
 Vulnerability Example: Using weak password policies can lead to easily guessable passwords.
 
