@@ -151,3 +151,22 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 ````
+
+## A06:2021 – Vulnerable and Outdated Components 
+https://owasp.org/Top10/A06_2021-Vulnerable_and_Outdated_Components/
+Vulnerability Example: In requirements.txt the project uses an outdated version of requests. There are potential security issues in this version. Requests has been leaking Proxy-Authorization headers to destination servers when redirected to an HTTPS endpoint: https://www.cvedetails.com/cve/CVE-2023-32681/
+
+In `requirements.txt`:
+
+
+````
+ requests==2.29.0
+````
+
+The outdated version should be updated to 
+
+````
+requests==2.31.0
+````
+
+to fix potential and existing security vulnerabilities. 

@@ -1,1 +1,6 @@
-django==5.1.2
+# A06:2021 – Vulnerable and Outdated Components 
+# remove line 5
+# uncomment line 4
+django==5.1.2 
+requests==2.29.0
+# requests==2.31.0

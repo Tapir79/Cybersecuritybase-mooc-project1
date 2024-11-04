@@ -1,11 +1,23 @@
 {% extends "base.html" %}
 
-{% block title %}Add New Recipe{% endblock %}
+{% block title %}Welcome to the Recipe App{% endblock %}
 
 {% block content %}
     <h1>Welcome to the Recipe App</h1>
     <p><a href="{% url 'recipe_list' %}">View All Recipes</a></p>
+
     {% if user.is_authenticated %}
-    <p><a href="{% url 'add_recipe' %}">Add a New Recipe</a></p>
-    {% endif %} 
+        <p><a href="{% url 'add_recipe' %}">Add a New Recipe</a></p>
+    {% endif %}
+
+    
+    {% if image %}
+        <div>
+            <img src="{{ image.download_url }}" alt="Photo by {{ image.author }}" width="300">
+            <p>Vulnerable Photo Example</p>
+            <p>Photo by {{ image.author }} (Lorem Picsum)</p> 
+        </div>
+    {% else %}
+        <p>No image found with the specified ID.</p>
+    {% endif %}
 {% endblock %}

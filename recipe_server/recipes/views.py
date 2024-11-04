@@ -1,14 +1,33 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from .models import Recipe, Ingredient, RecipeIngredient
-from django.http import Http404, JsonResponse
+from django.http import Http404, HttpResponse, JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import connection
 
+import requests
+
 def index(request):
-    return render(request, 'index.html') 
+    try:
+        response = requests.get("https://picsum.photos/v2/list")
+        response.raise_for_status()  
+
+        images = response.json()
+        filtered_image = None
+        for i in images:    
+            if i["id"] == "23":
+                 filtered_image = i
+
+    except requests.exceptions.RequestException as e:
+        print(f"Request error: {e}")
+        images = [] 
+    except ValueError as e:
+        print(f"JSON decoding error: {e}")
+        images = [] 
+
+    return render(request, 'index.html', {'image': filtered_image})
 
 def recipe_list(request):
     recipes = Recipe.objects.all()  # Fetch all Recipe instances
@@ -22,8 +41,8 @@ def recipe_detail(request, recipe_id):
         # A03:2021 – Injection
         # Insecure: Directly injecting `recipe_id` into the query without sanitization
         # Fix: 
-        # - uncomment row 28
-        # - delete row 27
+        # - uncomment row 47
+        # - delete row 46
         cursor.execute(f"SELECT * FROM recipe WHERE id = {recipe_id}") # vulnerable
         # cursor.execute("SELECT * FROM recipe WHERE id = %s", [recipe_id])
         recipe_row = cursor.fetchone()
@@ -101,6 +120,7 @@ def add_ingredient(request):
             return JsonResponse({'status': 'error', 'message': 'Ingredient already exists'})
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
+
 
 #### Authentication 
 
