@@ -66,7 +66,7 @@ Set the DJANGO_SECRET_KEY in your environment instead of storing it in the codeb
 ## 3. A03:2021 – Injection
 https://owasp.org/Top10/A03_2021-Injection/
 In `views.py`:
-https://github.com/Tapir79/Cybersecuritybase-mooc-project1/blob/9f16d70dcec815c3d67fb52186e4e5e128014b83/recipe_server/recipes/views.py#L27
+https://github.com/Tapir79/Cybersecuritybase-mooc-project1/blob/599c9ec81ab4d962c6a061e401fae44df252f23a/recipe_server/recipes/views.py#L46
 
 ````
 def recipe_detail(request, recipe_id):
@@ -157,7 +157,7 @@ https://owasp.org/Top10/A06_2021-Vulnerable_and_Outdated_Components/
 Vulnerability Example: In requirements.txt the project uses an outdated version of requests. There are potential security issues in this version. Requests has been leaking Proxy-Authorization headers to destination servers when redirected to an HTTPS endpoint: https://www.cvedetails.com/cve/CVE-2023-32681/
 
 In `requirements.txt`:
-
+https://github.com/Tapir79/Cybersecuritybase-mooc-project1/blob/599c9ec81ab4d962c6a061e401fae44df252f23a/requirements.txt#L5
 
 ````
  requests==2.29.0
