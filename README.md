@@ -2,6 +2,33 @@
 Web application that has at least five different flaws from the OWASP top ten list as well as their fixes. The project uses OWASP Top 10 2021: https://owasp.org/Top10/.  
 The project was created with this tutorial: https://docs.djangoproject.com/en/5.1/intro/tutorial01/ 
 
+This web application was developed with Django 5.1.2.The project was created with this tutorial: https://docs.djangoproject.com/en/5.1/intro/tutorial01/. 
+The flaws addressed in this report include Broken Access Control, Cryptographic Failures, Injection, Security Misconfiguration, Vulnerable and Outdated Components, and Identification and Authentication Failures from OWASP Top 10 2021: https://owasp.org/Top10/. 
+
+# Introduction
+
+The example Django project, where the flaws were implemented, is a simple recipe application. 
+What you can do in the app: 
+- You can view all recipes anonymously. Recipes are public. 
+- You can create new users
+- You can add new recipes only when logged in 
+
+The views: 
+There are 2 public views, 1 private view and 2 authentication views. 
+Public: 
+- Home: the landing page 
+- Recipes: view all added recipes from all users
+Private:
+- Add recipe: add a new recipe and new ingredients. This view will persist a new recipe to the database. 
+Authentication: 
+- Signup: create a new user
+- Login 
+
+Database structure:
+- Recipe: holds a basic information of the recipe like title, instructions
+- Ingredient: all possible ingredients used in recipes
+- RecipeIngredient: maps each recipe to its ingredients 
+
 # Install and Run the project
 
 ## Create python venv 
@@ -79,7 +106,7 @@ def recipe_detail(request, recipe_id):
 An attacker could send a request with javascript like this:
 
 ````
-fetch("/recipe_detail?recipe_id=1; DROP TABLE recipe; --")
+fetch("/recipes/1; DROP TABLE recipe; --")
     .then(response => response.text())
     .then(data => console.log(data));
 ````

@@ -43,7 +43,7 @@ def recipe_detail(request, recipe_id):
         # Fix: 
         # - uncomment row 47
         # - delete row 46
-        cursor.execute(f"SELECT * FROM recipe WHERE id = {recipe_id}") # vulnerable
+        cursor.execute(f"SELECT * FROM recipe WHERE id = {recipe_id}") # vulnerable /recipes/1; DROP TABLE recipe; --
         # cursor.execute("SELECT * FROM recipe WHERE id = %s", [recipe_id])
         recipe_row = cursor.fetchone()
     
